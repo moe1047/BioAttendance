@@ -26,6 +26,7 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    'env' => env('company_name', 'SomPower'),
 
     /*
     |--------------------------------------------------------------------------

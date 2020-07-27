@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-xs-12">
             <h2 class="page-header">
-                <i class="fa fa-globe"></i> Premier Bank.
+                <i class="fa fa-globe"></i> {{env("COMPANY_NAME", "Company Name")}}.
 
                 <small class="pull-right">{{date("Y/m/d")}}</small>
             </h2>
