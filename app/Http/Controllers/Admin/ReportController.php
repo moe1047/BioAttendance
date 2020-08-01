@@ -525,9 +525,11 @@ class ReportController extends Controller
     }
 
     public function sendPrintDailyReport(Request $request){
-        
+        $departments=\App\Department::all()->pluck('DEPTNAME','DEPTID');
+        $departments->prepend('All', 'All');
+    
         if($request->input("date")!=''){
-            $daily_reports=Helper::DailyReport($request->input("date"));
+            $daily_reports=Helper::DailyReport($request->input("date"),$request->input("departments"));
             $date = $request->input("date");
         }else{
             $daily_reports=Helper::DailyReport();
@@ -558,7 +560,7 @@ class ReportController extends Controller
             }else{
                 $holiday=false;
             };
-            return view("Dashboard",compact('daily_reports',$this->data,'date','emails','holiday','time'));
+            return view("Dashboard",compact('daily_reports',$this->data,'date','emails','holiday','time','departments'));
         }
     }
 }

@@ -265,17 +265,26 @@ class Helper
         return $time_table_report;
     }
 
-    public static function DailyReport($date=null){
+    public static function DailyReport($date=null,$department='All'){
         $date==null?$date=Carbon::today()->format('Y-m-d'):$date;
         //$users=UserInfo::orderBy('NAME', 'asc')->get();
-
-
-
         $users = UserInfo::with('Department')
-          ->get()
-          ->sortBy(function($user) {
-              return $user->Department->DEPTNAME;
-          });
+                ->get()
+                ->sortBy(function($user) {
+                    return $user->Department->DEPTNAME;
+                });
+        if ($department != 'All'){
+            $users = UserInfo::with('Department')
+                ->where('DEFAULTDEPTID', '=', "{$department}")
+                ->get()
+                ->sortBy(function($user) {
+                    return $user->Department->DEPTNAME;
+                });
+        }
+
+
+
+        
 
 
         $reports=array();

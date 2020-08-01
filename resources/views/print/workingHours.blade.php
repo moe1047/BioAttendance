@@ -49,7 +49,6 @@
                         <th>
                             Thursday
                         </th>
-
                         <th>
                             Friday
                         </th>

@@ -30,7 +30,7 @@
     <table  id="datatable" align="center"  >
 
         <thead>
-        <tr >
+        <tr>
 
             <td colspan="8">
                 <img src="<?php echo $message->embed(public_path() . '/img/Attendance_mail_header.png'); ?>" alt="Creating Email Magic" width="100%" height="230" style="display: block;" />

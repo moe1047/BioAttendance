@@ -30,6 +30,8 @@ Route::group(
             $this->data['title'] = trans('backpack::base.dashboard'); // set the page title
             $daily_reports=\App\Helpers\Helper::DailyReport();
             $time=Carbon::now()->format('g:i a');
+            $departments=\App\Department::all()->pluck('DEPTNAME','DEPTID');
+            $departments->prepend('All', 'All');
             // Carbon::parse($time)->gt(Carbon::parse('2:03 pm'))  ? "True":"False";
 
             $date=Carbon::today()->format('Y-m-d');
@@ -41,7 +43,7 @@ Route::group(
                 $holiday=false;
             };
 
-            return view("Dashboard",compact('daily_reports',$this->data,'date','emails','holiday','time'));
+            return view("Dashboard",compact('daily_reports',$this->data,'date','emails','holiday','time','departments'));
 
         });
 
