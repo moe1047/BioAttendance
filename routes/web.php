@@ -56,23 +56,9 @@ Route::group([
     'namespace' => 'Admin'
 ], function() {
     Route::get('/test', function () {
-        $date=null;
-        $date==null?$date=\Carbon\Carbon::today()->format('Y-m-d'):$date;
-        $holiday=\App\Models\Holiday::where('from','<=','2018-5-13')->where('to','>=','2018-5-13');
-        return count($holiday->get());
+        $departments = \App\Department::find(1)->children()->pluck('DEPTID')->prepend(333);
+        return $departments;
 
-        //if today is holiday
-        if(count(\App\Models\Holiday::where('from','<=',$date)->where('to','>=',$date)->get()) > 0){
-            return \App\Models\Holiday::where('from','<=',$date)->where('to','>=',$date)->whereHas('exceptions', function($q)
-            {
-                $q->where('USERID', '=', 67);
-
-            })->get();
-
-
-        }else{
-            return "it is not";
-        };
     });
     // your CRUD resources and other admin routes here
     CRUD::resource('timetable', 'TimeTableCrudController');

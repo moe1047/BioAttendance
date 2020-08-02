@@ -74,8 +74,16 @@ class Department extends Model
 	*/
 	public function departmentUsers()
 	{
-		return $this->hasMany('App\UserInfo','DEFAULTDEPTID', 'id');
-	}
+		return $this->hasMany('App\UserInfo','DEFAULTDEPTID', 'DEPTID');
+    }
+    public function children()
+    {
+        return $this->hasMany('App\Department', 'SUPDEPTID', 'DEPTID');
+    }
+    public function getChildrenAttribute()
+    {
+        return $this->children->pluck('DEPTID');
+    }
 
     /*
 	|--------------------------------------------------------------------------

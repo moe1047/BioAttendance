@@ -274,8 +274,9 @@ class Helper
                     return $user->Department->DEPTNAME;
                 });
         if ($department != 'All'){
+            $departments = \App\Department::find($department)->children()->pluck('DEPTID')->prepend($department);
             $users = UserInfo::with('Department')
-                ->where('DEFAULTDEPTID', '=', "{$department}")
+                ->whereIn('DEFAULTDEPTID', $departments)
                 ->get()
                 ->sortBy(function($user) {
                     return $user->Department->DEPTNAME;

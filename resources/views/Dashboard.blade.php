@@ -33,7 +33,7 @@
                     <div class="col-md-6">
                         {!! Form::label('date', 'Date', ['class' => '']) !!}
                         {!! Form::date('date',\Carbon\Carbon::now(),['class'=>'form-control']) !!}
-                        {!! Form::label('departments', 'Department', ['class' => '']) !!}
+                        {!! Form::label('departments', 'Department', ['class' => '','style' => 'padding-left:20px']) !!}
                         {!! Form::select("departments", $departments,  isset($departments)?$departments:null, ['class'=>'form-control select2']) !!}
                         <button name="search" class="btn btn-primary btn-sm" value="search">Search</button>
                     </div>
