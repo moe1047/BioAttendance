@@ -30,7 +30,7 @@
                     <button name="print" class="btn btn-success btn-sm" value="print">Print</button>
                     <button name="email" class="btn btn-success btn-sm" value="email">Send</button>
                     <button class="btn btn-default btn-sm" name="email" value="email" data-toggle="modal" data-target="#myModal" onclick="return false"><span class="fa fa-book" ></span> Email List</button>
-                    <div class="col-md-6">
+                    <div class="col-xs-7">
                         {!! Form::label('date', 'Date', ['class' => '']) !!}
                         {!! Form::date('date',\Carbon\Carbon::now(),['class'=>'form-control']) !!}
                         {!! Form::label('departments', 'Department', ['class' => '','style' => 'padding-left:20px']) !!}
