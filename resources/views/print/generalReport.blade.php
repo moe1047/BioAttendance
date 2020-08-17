@@ -37,6 +37,9 @@
                                 Worked Days
                             </th>
                             <th>
+                                Absent Days
+                            </th>
+                            <th>
                                 Working Shifts
                             </th>
                             <th>
@@ -55,9 +58,6 @@
                             <th>
                                 deduction Amount
                             </th>
-                            <th>
-                                To pay
-                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -74,6 +74,9 @@
                                     </td>
                                     <td>
                                         {{$report['worked_days']}}
+                                    </td>
+                                    <td>
+                                        {{$report['working_days'] - $report['worked_days']}}
                                     </td>
                                     <td>
                                         {{$report['all_shifts']}}
@@ -94,9 +97,7 @@
                                     <td>
                                         {{number_format($report['deduction_amount'],0) .' /'.$report['currency']}}
                                     </td>
-                                    <td>
-                                        {{$to_pay=number_format($report['salary'] - $report['deduction_amount'])}}
-                                    </td>
+                                    
                                 </tr>
                             @elseif($type=="late")
                                 @if($report['late']>0)

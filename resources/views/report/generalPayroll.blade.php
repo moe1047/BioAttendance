@@ -117,6 +117,9 @@
                                                 Worked Days
                                             </th>
                                             <th>
+                                                Absent Days
+                                            </th>
+                                            <th>
                                                 Working Shifts
                                             </th>
                                             <th>
@@ -155,6 +158,9 @@
                                                 </td>
                                                 <td>
                                                     {{$report['worked_days']}}
+                                                </td>
+                                                <td>
+                                                    {{$report['working_days'] - $report['worked_days']}}
                                                 </td>
                                                 <td>
                                                     {{$report['all_shifts']}}
@@ -377,4 +383,3 @@
     </script>
 
 @stop
-
