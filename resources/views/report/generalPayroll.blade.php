@@ -46,14 +46,14 @@
                                 <label for="exampleInputPassword1">
                                     Type:
                                 </label>
-                                {!! Form::select("type",  array('all' => 'All','late' => 'Late', 'absent' => 'Absents'), isset($type)?$type:null, ['class'=>'form-control select2']) !!}
+                                {!! Form::select("type",  array('all' => 'All','late' => 'Late', 'absent' => 'Absents'), isset($type)?$type:null, ['class'=>'form-control select2',"id"=>"type"]) !!}
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputPassword1">
                                     Department:
                                 </label>
 
-                                {!! Form::select("departments", $departments,  isset($departments)?$departments:null, ['class'=>'form-control select2']) !!}
+                                {!! Form::select("departments", $departments,  isset($departments)?$departments:null, ['class'=>'form-control select2',"id"=>"department"]) !!}
                             </div>
                             <button class="btn btn-success" name="search"  value="search">Search</button><span>
 				            <button class="btn btn-default" name="print" value="print">Print</button></span>
@@ -210,6 +210,9 @@
                                                             {{$report['worked_days']}}
                                                         </td>
                                                         <td>
+                                                            {{$report['working_days'] - $report['worked_days']}}
+                                                        </td>
+                                                        <td>
                                                             {{$report['all_shifts']}}
                                                         </td>
                                                         <td>
@@ -252,6 +255,9 @@
                                                         </td>
                                                         <td>
                                                             {{$report['worked_days']}}
+                                                        </td>
+                                                        <td>
+                                                            {{$report['working_days'] - $report['worked_days']}}
                                                         </td>
                                                         <td>
                                                             {{$report['all_shifts']}}
@@ -367,7 +373,7 @@
                     exportOptions: {
                         columns: [ 0,1,2,3,4,5,6,7,8,9 ]
                     },
-                    title: 'G. Report ' + $("#from_date").val()+ " to " + $("#to_date").val()
+                    title: $("#type option:selected").text() + " - "+ $("#department option:selected").text() + " " +$("#from_date").val()+ " to " + $("#to_date").val()
 
                 },
                  'csv','colvis'

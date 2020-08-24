@@ -134,7 +134,7 @@ var table = $('#dailyAttTable').DataTable({
         exportOptions: {
             columns: [ 0,1,2,3,4,5,6 ]
         },
-        title: "Daily Attendance - "+ $("#department option:selected").val()+ " " + $("#date").val()
+        title: "Daily Attendance - "+ $("#department option:selected").text()+ " " + $("#date").val()
 
     },
      'csv','colvis'
