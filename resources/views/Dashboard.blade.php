@@ -1,6 +1,7 @@
 @extends('backpack::layout')
 
 @section('header')
+    <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/datatables2') }}/datatables.min.css">
     <section class="content-header">
         <h1>
             {{ trans('backpack::base.dashboard') }}<small>{{ trans('backpack::base.first_page_you_see') }}</small>
@@ -26,15 +27,15 @@
             <div class="col-md-12">
                 <form role="form" class="form-inline" action="{{url('admin/report/dailyReport')}}" method="get">
                     {{ csrf_field() }}
-                    
+
                     <button name="print" class="btn btn-success btn-sm" value="print">Print</button>
                     <button name="email" class="btn btn-success btn-sm" value="email">Send</button>
                     <button class="btn btn-default btn-sm" name="email" value="email" data-toggle="modal" data-target="#myModal" onclick="return false"><span class="fa fa-book" ></span> Email List</button>
                     <div class="col-xs-7">
                         {!! Form::label('date', 'Date', ['class' => '']) !!}
-                        {!! Form::date('date',\Carbon\Carbon::now(),['class'=>'form-control']) !!}
+                        {!! Form::date('date',\Carbon\Carbon::now(),['class'=>'form-control',"id"=>"date"]) !!}
                         {!! Form::label('departments', 'Department', ['class' => '','style' => 'padding-left:20px']) !!}
-                        {!! Form::select("departments", $departments,  isset($departments)?$departments:null, ['class'=>'form-control select2']) !!}
+                        {!! Form::select("departments", $departments,  isset($departments)?$departments:null, ['class'=>'form-control select2',"id"=>"department"]) !!}
                         <button name="search" class="btn btn-primary btn-sm" value="search">Search</button>
                     </div>
 
@@ -76,7 +77,7 @@
         <!-- /.box-header -->
         <div class="box-body">
             <div class="table-responsive">
-                <table class="table no-margin table-stripped">
+                <table class="table no-margin table-stripped" id="dailyAttTable">
                     <thead>
                     <tr>
                         <th>Name</th>
@@ -91,14 +92,12 @@
                     </thead>
                     <tbody>
                     @foreach($daily_reports as $daily_report)
-                        <tr>
-                            <td rowspan="{{count($daily_report["date"]["$date"]['shifts'])+2}}">{{$daily_report["name"]}}</td>
-                        </tr>
-                        <tr>
-                            <td rowspan="{{count($daily_report["date"]["$date"]['shifts'])+2}}">{{$daily_report["department"]}}</td>
-                        </tr>
+
+
                         @foreach($daily_report["date"]["$date"]['shifts'] as $shift)
                             <tr>
+                              <td >{{$daily_report["name"]}}</td>
+                              <td >{{$daily_report["department"]}}</td>
                                 <td class="info"><b>{{$shift['start_time']}}</b></td>
                                 <td class="{{$shift['late']>0 || Carbon\Carbon::parse($time)->gt($shift['start_time']) ?'danger':''}}" >{{$shift["clock_in_time"]}}</td>
                                 <td>{{$shift['late']}}</td>
@@ -106,6 +105,7 @@
                                 <td>{{$shift['total_shift_min']}}</td>
                             </tr>
                         @endforeach
+
                     @endforeach
                     </tbody>
                 </table>
@@ -116,4 +116,32 @@
 
         <!-- /.box-footer -->
     </div>
+
 @endsection
+@section('after_scripts')
+<script src="{{asset('vendor/adminlte/plugins/datatables')}}/jquery.dataTables.min.js"></script>
+<script src="{{asset('vendor/adminlte/plugins/datatables2')}}/datatables.min.js"></script>
+<script>
+$(document).ready( function () {
+var table = $('#dailyAttTable').DataTable({
+   "pageLength": 50,
+    dom: 'Bfrtip',
+    responsive: true,
+    buttons: [
+
+        {
+        extend: 'excelHtml5',
+        exportOptions: {
+            columns: [ 0,1,2,3,4,5,6 ]
+        },
+        title: "Daily Attendance - "+ $("#department option:selected").val()+ " " + $("#date").val()
+
+    },
+     'csv','colvis'
+
+
+    ]
+} );
+} );
+</script>
+@stop

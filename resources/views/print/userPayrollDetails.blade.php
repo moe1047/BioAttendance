@@ -31,7 +31,7 @@
                 <div class="">
                     <!-- /.box-header -->
                     <div class="">
-                        <?php $deduction_amount=0;$total_deduction_amount=0;$total_late_min=0;
+                        <?php $deduction_amount=0;$total_deduction_amount=0;$total_late_min=0;$total_working_days=0;$total_worked_days=0;$total_absent_days=0;
                         ?>
 
                         @if(isset($reports))
@@ -81,20 +81,32 @@
                                         <?php $total_deduction_amount+=$deduction_amount; ?>
 										<?php $total_late_min+=$shift['late']; ?>
                                     @endforeach
+                                    <?php $total_working_days+=$report["working_day"]; ?>
+                                    <?php $total_worked_days+=$report["worked_day"]; ?>
                                 @endforeach
 
                                 </tbody>
-                                <tfoot>
                                 <tr>
+                                    <td><b>T.Working Days</b></td>
+                                    <td><b>{{$total_working_days}}</b></td>
+                                    <td><b>T.Worked Days</b></td>
+                                    <td><b>{{$total_worked_days}}</b></td>
+                                    <td><b>T.Absent Days</b></td>
+                                    <td><b>{{$total_working_days - $total_worked_days }}</b></td>
                                     <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>TOTAL Late</td>
-                                    <td>{{$total_late_min}}</td>
-                                    <td>TOTAL:</td>
-                                    <td>{{number_format($total_deduction_amount, 2, '.', ',')}}</td>
                                 </tr>
-                                </tfoot>
+                                <tr>
+
+                                  <td><b>T.Late:</b></td>
+                                  <td>{{$total_late_min}}</td>
+                                  <td><b>T.Deduction:</b></td>
+                                  <td>{{number_format($total_deduction_amount, 2, '.', ',')}}</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+
+
+                                </tr>
                             </table>
                         @endif
 

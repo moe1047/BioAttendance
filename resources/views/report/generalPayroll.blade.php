@@ -2,7 +2,8 @@
 @section('before_styles')
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/select2') }}/select2.css">
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/datepicker') }}/datepicker3.css">
-    <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/datatables') }}/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/datatables2') }}/datatables.min.css">
+
     <!-- iCheck for checkboxes and radio inputs -->
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/') }}/iCheck/all.css">
     <!-- daterange picker -->
@@ -33,13 +34,13 @@
                                 <label for="exampleInputEmail1">
                                     From:
                                 </label>
-                                <input type="text" class="form-control date" id="exampleInputEmail1" name="from_date" value="{{isset($from_date)?$from_date:''}}" required>
+                                <input type="text" class="form-control date" id="from_date" name="from_date" value="{{isset($from_date)?$from_date:''}}" required>
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputPassword1">
                                     To:
                                 </label>
-                                <input type="text" class="form-control date" id="exampleInputPassword1" name="to_date" value="{{isset($to_date)?$to_date:''}}" required>
+                                <input type="text" class="form-control date" id="to_date" name="to_date" value="{{isset($to_date)?$to_date:''}}" required>
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputPassword1">
@@ -140,6 +141,9 @@
                                             </th>
                                             <th>
                                                 To pay
+
+                                            </th>
+                                            <th>
 
                                             </th>
                                         </tr>
@@ -306,7 +310,7 @@
 @stop
 @section('after_scripts')
     <script src="{{asset('vendor/adminlte/plugins/datatables')}}/jquery.dataTables.min.js"></script>
-    <script src="{{asset('vendor/adminlte/plugins/datatables')}}/dataTables.bootstrap.min.js"></script>
+    <script src="{{asset('vendor/adminlte/plugins/datatables2')}}/datatables.min.js"></script>
 
     <script src="{{asset('vendor/adminlte/plugins/select2')}}/select2.full.js"></script>
     <script src="{{asset('vendor/adminlte/plugins/datepicker')}}/bootstrap-datepicker.js"></script>
@@ -351,7 +355,26 @@
             $('.date').datepicker({
                 format: "yyyy-mm-dd"
             });
-            $("#datatable").DataTable();
+            $("#datatable").DataTable({
+              "pageLength": 50,
+                dom: 'Bfrtip',
+                responsive: true,
+                colReorder: true,
+                buttons: [
+
+                    {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [ 0,1,2,3,4,5,6,7,8,9 ]
+                    },
+                    title: 'G. Report ' + $("#from_date").val()+ " to " + $("#to_date").val()
+
+                },
+                 'csv','colvis'
+
+
+                ]
+            } );
             $("body").addClass('sidebar-collapse');
 
             $('input[name="daterange"]').daterangepicker(

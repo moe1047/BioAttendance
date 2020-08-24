@@ -52,6 +52,7 @@ class ReportController extends Controller
             //$day_rate=round($salary/$days_in_month,2);
 
             $reports=Helper::attendanceDetailCalculation($request->input("user_id"),$from_date,$to_date);
+
             $currency=$user_shift->currency;
             $users=UserInfo::all()->pluck('NAME','USERID');
             $selected_id=$request->input("user_id");
@@ -527,7 +528,7 @@ class ReportController extends Controller
     public function sendPrintDailyReport(Request $request){
         $departments=\App\Department::all()->pluck('DEPTNAME','DEPTID');
         $departments->prepend('All', 'All');
-    
+
         if($request->input("date")!=''){
             $daily_reports=Helper::DailyReport($request->input("date"),$request->input("departments"));
             $date = $request->input("date");
@@ -562,5 +563,139 @@ class ReportController extends Controller
             };
             return view("Dashboard",compact('daily_reports',$this->data,'date','emails','holiday','time','departments'));
         }
+    }
+
+    public function generalReportByUser($from_date,$to_date,$user_id){
+        //return $request->input("type");
+        $request->input("departments");
+
+        //return $request->input("daterange");
+        $from_date=$request->input("from_date");
+        $to_date=$request->input("to_date");
+        $type=$request->input("type");
+        if($request->input("departments") == 1){
+            $users=UserInfo::all();
+        }else{
+            $users=UserInfo::where('DEFAULTDEPTID',$request->input("departments"))->orderBy('USERID', 'ASC')->get();
+        }
+
+        //$users=UserInfo::all();
+        $days_in_month=cal_days_in_month(CAL_GREGORIAN, Carbon::createFromFormat('Y-m-d', $from_date)->month, Carbon::createFromFormat('Y-m-d', $from_date)->year);
+        $default_year=AcademicYear::where('default',true)->get()->first()->id;
+
+        $reports=array();
+        $academic_year=AcademicYear::where('default',true)->get()->first();
+        //$start = microtime(true);
+        foreach($users as $user){
+
+            $id=$user->USERID;
+            $user_shift=UserShift::where('userinfo_id',$id)->where('clicklizeAcYear_id',$default_year)->get()->first();
+            if(count($user_shift)){
+                $reports["$id"]['currency']=$user_shift->currency;
+                $reports["$id"]['salary']=$user_shift->salary;
+                if($user_shift->payment_type=='daily'){
+                    $day_rate=$user_shift->salary;
+                }elseif($user_shift->payment_type=='monthly'){
+                    $day_rate=round($user_shift->salary/$days_in_month,2);
+                }
+                $reports["$id"]['salary']=$user_shift->salary;
+            }else{
+                $reports["$id"]['currency']='';
+                $day_rate=0;
+                $reports["$id"]['salary']=0;
+
+            }
+
+            $reports["$id"]['name']=$user->NAME;
+
+            $reports["$id"]['working_days']=0;$reports["$id"]['worked_days']=0;$reports["$id"]['worked_shifts']=0;$reports["$id"]['absent_shifts']=0;$reports["$id"]['late']=0;$reports["$id"]['total_min']=0;
+            $reports["$id"]['total_absent_min']=0;$reports["$id"]['total_worked_min']=0;$reports["$id"]['deduction_amount']=0;$reports["$id"]['advance']=0;
+            $dates=$this->attendanceCalculation($id,$from_date, $to_date,$day_rate);
+            //return $from_date;break;
+            /*** loop through the dates */
+            foreach($dates as $day=>$date){
+                //return  $day;break;
+                $reports["$id"]['advance']+=Advance::whereDate('created_at',$day)->where('user_id',$id)->sum('amount');
+                //return $date;break;
+                $reports["$id"]['working_days']=$reports["$id"]['working_days']+$date['working_day'];
+                $reports["$id"]['worked_days']=$reports["$id"]['worked_days']+$date['worked_day'];
+                $reports["$id"]['worked_shifts']=$reports["$id"]['worked_shifts']+$date['shifts'];
+                $reports["$id"]['late']=$reports["$id"]['late']+$date['late'];
+                $reports["$id"]['absent_shifts']=$reports["$id"]['absent_shifts']+$date['absent_shifts'];
+                $reports["$id"]['total_min']=$reports["$id"]['total_min']+$date['total_min'];
+                $reports["$id"]['total_absent_min']=$reports["$id"]['total_absent_min']+$date['total_absent_min'];
+                $reports["$id"]['total_worked_min']=$reports["$id"]['total_worked_min']+$date['total_worked_min'];
+                $reports["$id"]['deduction_amount']=$reports["$id"]['deduction_amount']+$date['deduction_amount'];
+            }
+
+            $reports["$id"]['all_shifts']=$reports["$id"]['worked_shifts']+$reports["$id"]['absent_shifts'];
+            $reports["$id"]['accumulated_rate']=$day_rate*$reports["$id"]['working_days'];
+
+            /*** get userShifts for this user
+            $userShift=UserShift::where('userinfo_id',$id)
+            ->where('clicklizeAcYear_id',$academic_year->id);*/
+
+
+            /*** if user has userShifts */
+
+            /*if(count($userShift->get())){
+                //return "there is";
+
+            }else{
+                //return "there is not";
+                $reports["$id"]['salary']=0;
+            }*/
+            /*** calculate rate = salary/total_min
+            if($reports["$id"]['salary']!==0 and $reports["$id"]['total_min']==!0){
+            $reports["$id"]['rate']=round($reports["$id"]['salary']/$reports["$id"]['total_min'],4);
+            }else{
+            $reports["$id"]['rate']=0;
+            }*/
+
+            //$reports["$id"]['deduction_amount']=($reports["$id"]['late']+$reports["$id"]['total_absent_min'])*$reports["$id"]['rate'];
+            //return $reports;
+
+
+            /*** calculate rate = salary/total_min */
+
+
+            //$report["$id"]['salary']=$report["$id"]['worked_shifts']+$report["$id"]['absent_shifts'];
+            //$report["$id"]['rate']=$report["$id"]['working_days']+$report["$id"]['absent_shifts'];
+
+
+        }
+        //$time_elapsed_secs = microtime(true) - $start;
+        //return $execution_time = ($time_elapsed_secs)/60;
+        $departments=Department::all()->pluck('DEPTNAME','DEPTID');
+        $emails=Email::all()->pluck('email_name','id');
+        //return dd($reports);
+        if($request->input("search")!=''){
+            return view('report.generalPayroll',compact('reports','from_date','to_date','emails','departments','type'));
+        }elseif($request->input("print")!='')
+        {
+            $department=Department::where('DEPTID',$request->input("departments"))->get()->first()->DEPTNAME;
+
+            return view('print.generalReport',compact('reports','from_date','to_date','department','type'));
+        }
+        elseif($request->input("email")!='')
+        {
+            if($request->input("emails")!=''){
+                $emails=$this->getEmailsByIds($request->input("emails")) ;
+                Mail::send('mail.generalReport', ['reports' => $reports,'from_date'=>$from_date,'to_date'=>$to_date,'type'=>$type], function ($message)use($emails,$from_date,$to_date)  {
+                    $today=Carbon::now()->toDateString();
+                    //$m->from('moe1047@gmail.com', 'Your Application');
+                    //$message->embed(asset('img/Attendance_mail_header.png'));
+                    $message->to($emails)->subject('General Report From: '.$from_date.' To: '.$to_date);
+                });
+
+            }
+
+            return redirect()->back()->with(['from_date','to_date']);
+        }else{
+            return "Sorry";
+        }
+        //return $hey;
+        //return dd($reports);
+        //return view('report.generalPayroll',compact('reports','from_date','to_date'));
     }
 }

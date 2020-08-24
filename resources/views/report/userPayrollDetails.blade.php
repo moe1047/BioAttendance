@@ -2,7 +2,7 @@
 @section('before_styles')
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/select2') }}/select2.css">
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/datepicker') }}/datepicker3.css">
-    <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/datatables') }}/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/datatables2') }}/datatables.min.css">
     <!-- iCheck for checkboxes and radio inputs -->
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/') }}/iCheck/all.css">
     <!-- daterange picker -->
@@ -31,13 +31,13 @@
                                 <label for="exampleInputEmail1">
                                     From:
                                 </label>
-                                <input type="text" class="form-control date" id="exampleInputEmail1" name="from_date" value="{{isset($from_date)?$from_date:''}}" required>
+                                <input type="text" class="form-control date" id="from_date" name="from_date" value="{{isset($from_date)?$from_date:''}}" required>
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputPassword1">
                                     To:
                                 </label>
-                                <input type="text" class="form-control date" id="exampleInputPassword1" name="to_date" value="{{isset($to_date)?$to_date:''}}" required>
+                                <input type="text" class="form-control date" id="to_date" name="to_date" value="{{isset($to_date)?$to_date:''}}" required>
                             </div>
 
                             <div class="form-group ">
@@ -45,7 +45,7 @@
                                     User:
                                 </label>
 
-                                    {!! Form::select("user_id", $users, $selected_id, ['class'=>'form-control select2',"id"=>"exampleInputPassword12"]) !!}
+                                    {!! Form::select("user_id", $users, $selected_id, ['class'=>'form-control select2',"id"=>"user"]) !!}
 
 
 
@@ -113,7 +113,7 @@
                         <div class="box">
                             <!-- /.box-header -->
                             <div class="box-body table-responsive">
-                                <?php $deduction_amount=0;$total_deduction_amount=0;$total_late_min=0;
+                                <?php $deduction_amount=0;$total_deduction_amount=0;$total_late_min=0;$total_working_days=0;$total_worked_days=0;$total_absent_days=0;
                                 ?>
 
                                 @if(isset($reports))
@@ -130,13 +130,13 @@
                                                 Shift In
                                             </th>
                                             <th>
-                                                Clocked IN
+                                                Clocked in
                                             </th>
                                             <th>
                                                 Shift out
                                             </th>
                                             <th>
-                                                Clocked OUT
+                                                Clocked out
                                             </th>
                                             <th>
                                                 Late(mins)
@@ -153,43 +153,48 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach($reports as $date=>$report)
 
-                                        <tr>
-                                            <td rowspan="{{count($report['shifts'])+1}}">{{$date}}</td>
-                                            <td rowspan="{{count($report['shifts'])+1}}">{{$report["day"]}}</td>
-                                        </tr>
+                                        @foreach($reports as $date=>$report)
                                         @foreach($report['shifts'] as $shift)
                                             <tr>
+                                                <td>{{$date}}</td>
+                                                <td>{{$report["day"]}}</td>
                                                 <td><b>{{$shift['start_time']}}</b></td>
                                                 <td>{{$shift["clock_in_time"]}}</td>
                                                 <td><b>{{$shift['end_time']}}</b></td>
                                                 <td>{{$shift["clock_out_time"]}}</td>
                                                 <td>{{$shift['late']}}</td>
-												<td>{{$shift['total_shift_min']}}</td>
+												                        <td>{{$shift['total_shift_min']}}</td>
                                                 <td>{{$rate_per_min=$report["total_min"]==0?$day_rate:(round($day_rate/$report["total_min"],4))}}</td>
 
                                                 <td>{{$shift["clock_in_time"]==0?number_format($deduction_amount=($rate_per_min*$shift['late'])+($rate_per_min*$shift['total_shift_min']), 2, '.', ','):number_format($deduction_amount=$rate_per_min*$shift['late'], 2, '.', ',')}}</td>
 
                                             </tr>
+                                            <?php $total_late_min+=$shift['late']; ?>
                                             <?php $total_deduction_amount+=$deduction_amount; ?>
-											<?php $total_late_min+=$shift['late']; ?>
-                                        @endforeach
+
+
                                         @endforeach
 
-                                        </tbody>
-                                        <tfoot>
+
+                                        <?php $total_working_days+=$report["working_day"]; ?>
+                                        <?php $total_worked_days+=$report["worked_day"]; ?>
+                                        @endforeach
                                         <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>TOTAL Late:</td>
+                                            <td><b>T.Working Days</b></td>
+                                            <td><b>{{$total_working_days}}</b></td>
+                                            <td><b>T.Worked Days</b></td>
+                                            <td><b>{{$total_worked_days}}</b></td>
+                                            <td><b>T.Absent Days</b></td>
+                                            <td><b>{{$total_working_days - $total_worked_days }}</b></td>
+                                            <td><b>T.Late:</b></td>
                                             <td>{{$total_late_min}}</td>
-                                            <td>TOTAL:</td>
+                                            <td><b>T.Deduction:</b></td>
                                             <td>{{number_format($total_deduction_amount, 2, '.', ',')}}</td>
+
                                         </tr>
-                                        </tfoot>
+
+                                        </tbody>
                                     </table>
                                 @endif
 
@@ -212,7 +217,7 @@
 @stop
 @section('after_scripts')
     <script src="{{asset('vendor/adminlte/plugins/datatables')}}/jquery.dataTables.min.js"></script>
-    <script src="{{asset('vendor/adminlte/plugins/datatables')}}/dataTables.bootstrap.min.js"></script>
+    <script src="{{asset('vendor/adminlte/plugins/datatables2')}}/datatables.min.js"></script>
 
     <script src="{{asset('vendor/adminlte/plugins/select2')}}/select2.full.js"></script>
     <script src="{{asset('vendor/adminlte/plugins/datepicker')}}/bootstrap-datepicker.js"></script>
@@ -246,6 +251,26 @@
         }
         $( document ).ready(function() {
             //iCheck for checkbox and radio inputs
+            $("#datatable").DataTable({
+              "pageLength": 50,
+                dom: 'Bfrtip',
+                responsive: true,
+                colReorder: true,
+                buttons: [
+
+                    {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [ 0,1,2,3,4,5,6,7,8,9 ]
+                    },
+                    title: $("#user option:selected").text()+" " + $("#from_date").val()+ " to " + $("#to_date").val()
+
+                },
+                 'csv','colvis'
+
+
+                ]
+            } );
 
             //Flat red color scheme for iCheck
             $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
@@ -289,4 +314,3 @@
     </script>
 
 @stop
-
