@@ -1,0 +1,1 @@
+REN "public\index.php" index.php.suspected
