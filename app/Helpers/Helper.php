@@ -91,7 +91,9 @@ class Helper
                                   "clock_in_time"=>$time_table_report['clock_in_time'],
                                   "clock_out_time"=>$time_table_report['clock_out_time'],
                                   "late"=>$time_table_report['late'],"early"=>$time_table_report['early'],
-                                  "total_shift_min"=>$time_table_report['total_min']];
+                                  "total_shift_min"=>$time_table_report['total_min'],
+                                  "present"=>$time_table_report['present']
+                                ];
 
                             }else{
                               $report["$date"]['shifts'][]=["start_time"=>"-",
@@ -99,7 +101,8 @@ class Helper
                                   "clock_in_time"=>"-",
                                   "clock_out_time"=>"-",
                                   "late"=>"-","early"=>"-",
-                                  "total_shift_min"=>"-"];
+                                  "total_shift_min"=>"-",
+                                "present"=>'-'];
 
                         }
 
@@ -118,7 +121,7 @@ class Helper
                     $report["$date"]['day']=Carbon::parse($date)->format('l');
                     $report["$date"]['shifts'][]=[
                         "start_time"=>"Not Set","clock_in_time"=>0,"late"=>0,"total_shift_min"=>0,"early"=>0,"end_time"=>0,
-                        "clock_out_time"=>0
+                        "clock_out_time"=>0,"present"=>'Not Set'
                     ];
                     //global $report;
                     //$report["$date"]['shifts']=0;
@@ -142,7 +145,7 @@ class Helper
 
                 $report["$date"]['shifts'][]=[
                     "start_time"=>$label,"clock_in_time"=>0,"late"=>0,"total_shift_min"=>0,"early"=>0,"end_time"=>0,
-                    "clock_out_time"=>0
+                    "clock_out_time"=>0,"present"=>'Not Set'
                 ];
                 //global $report;
                 //$report["$date"]['shifts']=0;
@@ -220,6 +223,7 @@ class Helper
 
 
         }else{
+
             //$time_table_report['total_min']=$total_time_table_min;
             $time_table_report['clock_in_time']=0;
             $time_table_report['total_worked_min']=0;
@@ -242,11 +246,15 @@ class Helper
             }
 
         }else{
+            if($timetable->must_clock_out){
+              $time_table_report['absent_shift']=1;
+              $time_table_report['present']=0;
+            };
             $time_table_report['clock_out_time']=0;
             $time_table_report['early']=0;
 
-        }
-        ;
+        };
+        //must clockout and must clockin
 
       }else{
         $time_table_report['total_min']=0;
@@ -285,7 +293,7 @@ class Helper
 
 
 
-        
+
 
 
         $reports=array();

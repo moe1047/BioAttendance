@@ -150,6 +150,9 @@
                                             <th>
                                                 deduction Amount
                                             </th>
+                                            <th>
+                                                Status
+                                            </th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -168,6 +171,13 @@
                                                 <td>{{$rate_per_min=$report["total_min"]==0?$day_rate:(round($day_rate/$report["total_min"],4))}}</td>
 
                                                 <td>{{$shift["clock_in_time"]==0?number_format($deduction_amount=($rate_per_min*$shift['late'])+($rate_per_min*$shift['total_shift_min']), 2, '.', ','):number_format($deduction_amount=$rate_per_min*$shift['late'], 2, '.', ',')}}</td>
+                                                @if ($shift['present'] == 1)
+                                                    <td class="success">Present</td>
+                                                @elseif ($shift['present'] == 0)
+                                                    <td class="danger">Absent</td>
+                                                @else
+                                                    <td>Not Set</td>
+                                                @endif
 
                                             </tr>
                                             <?php $total_late_min+=$shift['late']; ?>
@@ -191,6 +201,7 @@
                                             <td>{{$total_late_min}}</td>
                                             <td><b>T.Deduction:</b></td>
                                             <td>{{number_format($total_deduction_amount, 2, '.', ',')}}</td>
+                                            <td></td>
 
                                         </tr>
 
@@ -261,7 +272,7 @@
                     {
                     extend: 'excelHtml5',
                     exportOptions: {
-                        columns: [ 0,1,2,3,4,5,6,7,8,9 ]
+                        columns: [ 0,1,2,3,4,5,6,7,8,9,10 ]
                     },
                     title: $("#user option:selected").text()+" " + $("#from_date").val()+ " to " + $("#to_date").val()
 

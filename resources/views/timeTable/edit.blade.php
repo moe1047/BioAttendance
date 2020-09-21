@@ -81,6 +81,14 @@
                             <input type="time" name="end_clockout_time" value="{{$end_clockout_time}}" class="form-control">
 
                         </div>
+                        
+                        <div class="form-group col-xs-12">
+                          <input type="hidden" name="must_clock_out" value=0>
+                          <input type="checkbox" name="must_clock_out" {{ $must_clock_out ? 'checked="checked"' : '' }}  value=1 class="form-check-input">
+                            <label>Must Clock-Out</label>
+
+
+                        </div>
                         <div class="form-group col-md-12">
                             <input type="hidden" name="id" value="{{$id}}" class="form-control">
                         </div>
@@ -134,7 +142,3 @@
     </script>
 
 @stop
-
-
-
-

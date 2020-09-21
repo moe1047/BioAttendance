@@ -21,11 +21,13 @@ class Timetable extends Model
     // public $timestamps = false;
     // protected $guarded = ['id'];
     protected $fillable = ['name','start_time','end_time','late_min','early_min',
-		'start_clockin_time','end_clockin_time','start_clockout_time','end_clockout_time'];
+		'start_clockin_time','end_clockin_time','start_clockout_time','end_clockout_time','must_clock_in','must_clock_out'];
     // protected $hidden = [];
 	protected $casts = [
-'id' => 'integer'
-];
+  'id' => 'integer',
+  'must_clock_in' => 'boolean',
+  'must_clock_out' => 'boolean',
+  ];
 	protected $dates = [''];
 
     /*

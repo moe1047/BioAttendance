@@ -53,16 +53,20 @@ class TimetableCrudController extends CrudController
             'name' => 'start_clockin_time',
             'label' => 'Start clock-in time',
         ],
-            [   // Time
-                'name' => 'end_clockin_time',
-                'label' => 'End clock-in time',
-            ],[   // Time
-                'name' => 'start_clockout_time',
-                'label' => 'Start clock-out time',
-            ],[   // Time
-                'name' => 'end_clockout_time',
-                'label' => 'End clock-out time',
-            ]], 'create');
+        [   // Time
+            'name' => 'end_clockin_time',
+            'label' => 'End clock-in time',
+        ],[   // Time
+            'name' => 'start_clockout_time',
+            'label' => 'Start clock-out time',
+        ],[   // Time
+            'name' => 'end_clockout_time',
+            'label' => 'End clock-out time',
+        ],[   // Time
+            'name' => 'must_clock_out',
+            'label' => 'Must Clock-Out',
+            'type'  => 'checkbox'
+        ]], 'create');
         $this->crud->addFields([[   // Time
             'name' => 'start_time',
             'label' => 'Start time',
@@ -91,13 +95,13 @@ class TimetableCrudController extends CrudController
                 'name' => 'end_clockout_time',
                 'label' => 'End clock-out time',
             ]], 'update');
-        // $this->crud->removeField('name', 'update/create/both');
+         $this->crud->removeField('must_clock_in', 'update/create/both');
         // $this->crud->removeFields($array_of_names, 'update/create/both');
 
         // ------ CRUD COLUMNS
           // add a single column, at the end of the stack
          //$this->crud->addColumn(); // add multiple columns, at the end of the stack
-        // $this->crud->removeColumn('column_name'); // remove a column from the stack
+         $this->crud->removeColumn('must_clock_in'); // remove a column from the stack
         // $this->crud->removeColumns(['column_name_1', 'column_name_2']); // remove an array of columns from the stack
          $this->crud->setColumnDetails('start_time', ['label' => 'Start Time',
              ]);
@@ -108,6 +112,11 @@ class TimetableCrudController extends CrudController
         $this->crud->setColumnDetails('end_clockin_time', ['label' => 'End clock-in time','type' => 'time']);
         $this->crud->setColumnDetails('start_clockout_time', ['label' => 'Start clock-out time','type' => 'time']);
         $this->crud->setColumnDetails('end_clockout_time', ['label' => 'End clock-out time','type' => 'time']);
+
+        $this->crud->setColumnDetails('must_clock_out', ['label' => 'Must ClockOut','type' => 'check']);
+
+        //$this->crud->setColumnDetails('must_clock_in', ['label' => 'Must Clock-In','type' => 'checkbox']);
+        //$this->crud->setColumnDetails('must_clock_out', ['label' => 'Must Clock-Out','type' => 'checkbox']);
         // adjusts the properties of the passed in column (by name)
          //$this->crud->setColumnsDetails(['start_time', 'end_time'], ['label' => 'Start time'],['label' => 'End time']);
 
@@ -175,8 +184,10 @@ class TimetableCrudController extends CrudController
         $end_clockin_time=Carbon::parse($timetable->end_clockin_time)->format('H:i');
         $start_clockout_time=Carbon::parse($timetable->start_clockout_time)->format('H:i');
         $end_clockout_time=Carbon::parse($timetable->end_clockout_time)->format('H:i');
+        $must_clock_in = $timetable->must_clock_in;
+        $must_clock_out = $timetable->must_clock_out;
         return view('timeTable.edit',compact('name','start_time','end_time','late_min','early_min',
-            'start_clockin_time','end_clockin_time','start_clockout_time','end_clockout_time','id','timetable'));
+            'start_clockin_time','end_clockin_time','start_clockout_time','end_clockout_time','id','timetable','must_clock_in','must_clock_out'));
 
     }
 

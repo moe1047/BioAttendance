@@ -59,6 +59,9 @@
                                     <th>
                                         deduction Amount
                                     </th>
+                                    <th>
+                                        Status
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -76,6 +79,13 @@
                                             <td>{{$rate_per_min=$report["total_min"]==0?$day_rate:(round($day_rate/$report["total_min"],4))}}</td>
 
                                             <td>{{$shift["clock_in_time"]==0?number_format($deduction_amount=($rate_per_min*$shift['late'])+($rate_per_min*$shift['total_shift_min']), 2, '.', ','):number_format($deduction_amount=$rate_per_min*$shift['late'], 2, '.', ',')}}</td>
+                                            @if ($shift['present'] == 1)
+                                                <td class="success">Present</td>
+                                            @elseif ($shift['present'] == 0)
+                                                <td class="danger">Absent</td>
+                                            @else
+                                                <td>Not Set</td>
+                                            @endif
 
                                         </tr>
                                         <?php $total_deduction_amount+=$deduction_amount; ?>
@@ -94,6 +104,7 @@
                                     <td><b>T.Absent Days</b></td>
                                     <td><b>{{$total_working_days - $total_worked_days }}</b></td>
                                     <td></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
 
@@ -101,6 +112,7 @@
                                   <td>{{$total_late_min}}</td>
                                   <td><b>T.Deduction:</b></td>
                                   <td>{{number_format($total_deduction_amount, 2, '.', ',')}}</td>
+                                  <td></td>
                                   <td></td>
                                   <td></td>
                                   <td></td>

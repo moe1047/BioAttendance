@@ -87,6 +87,7 @@
                         <th>Late(min)</th>
                         <th>Out</th>
                         <th>Total (min)</th>
+                        <th>Status</th>
 
                     </tr>
                     </thead>
@@ -103,6 +104,13 @@
                                 <td>{{$shift['late']}}</td>
                                 <td>{{$shift["clock_out_time"]}}</td>
                                 <td>{{$shift['total_shift_min']}}</td>
+                                @if ($shift['present'] == 1)
+                                    <td class="success">Present</td>
+                                @elseif ($shift['present'] == 0)
+                                    <td class="danger">Absent</td>
+                                @else
+                                    <td>Not Set</td>
+                                @endif
                             </tr>
                         @endforeach
 
@@ -132,7 +140,7 @@ var table = $('#dailyAttTable').DataTable({
         {
         extend: 'excelHtml5',
         exportOptions: {
-            columns: [ 0,1,2,3,4,5,6 ]
+            columns: [ 0,1,2,3,4,5,6,7 ]
         },
         title: "Daily Attendance - "+ $("#department option:selected").text()+ " " + $("#date").val()
 

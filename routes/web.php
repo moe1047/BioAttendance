@@ -28,6 +28,7 @@ Route::group(
         Route::get('dashboard', function () {
 
             $this->data['title'] = trans('backpack::base.dashboard'); // set the page title
+            //return dd($daily_reports=\App\Helpers\Helper::DailyReport());
             $daily_reports=\App\Helpers\Helper::DailyReport();
             $time=Carbon::now()->format('g:i a');
             $departments=\App\Department::all()->pluck('DEPTNAME','DEPTID');
@@ -85,4 +86,3 @@ Route::group([
 
 });
 //Route::get('admin/shift/{id}/edit', 'ShiftCrudController@edit');
-
